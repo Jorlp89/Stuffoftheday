@@ -2,6 +2,8 @@
 
 A standalone, public, projector-friendly classroom dashboard showing six daily prompts at once. It is intentionally independent from every private teaching system.
 
+Public dashboard: https://stuffoftheday-production.up.railway.app
+
 ## Run locally
 
 Requires Node.js 20 or newer.
