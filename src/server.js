@@ -13,7 +13,7 @@ const cacheDir = process.env.CACHE_DIR || "/tmp/thing-of-the-day-cache";
 const memory = new Map();
 const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".svg": "image/svg+xml", ".json": "application/json; charset=utf-8" };
 
-const csp = ["default-src 'self'", "script-src 'self'", "style-src 'self'", "img-src 'self' https://upload.wikimedia.org data:", "connect-src 'self'", "font-src 'self'", "object-src 'none'", "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self' https://canva.com https://*.canva.com https://*.canva-apps.com", "upgrade-insecure-requests"].join("; ");
+const csp = ["default-src 'self'", "script-src 'self'", "style-src 'self'", "img-src 'self' https://upload.wikimedia.org data:", "connect-src 'self'", "font-src 'self'", "object-src 'none'", "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self' https://canva.com https://*.canva.com https://*.canva-apps.com https://morninghub-production.up.railway.app", "upgrade-insecure-requests"].join("; ");
 
 function headers(extra = {}) {
   return { "Content-Security-Policy": csp, "Referrer-Policy": "strict-origin-when-cross-origin", "X-Content-Type-Options": "nosniff", "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()", "Cross-Origin-Resource-Policy": "cross-origin", ...extra };
