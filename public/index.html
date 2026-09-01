@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f3efe4">
+  <title>Thing of the Day</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/refinements.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="board" aria-busy="true">
+    <header class="masthead">
+      <div><p class="eyebrow">A small cabinet of curiosities</p><h1>Thing of the Day</h1></div>
+      <div class="date"><span id="weekday">Today</span><strong id="date">Tokyo time</strong><button id="refresh" type="button" title="Refresh today's board" aria-label="Refresh today's board">↻</button></div>
+    </header>
+
+    <section class="grid" aria-live="polite">
+      <article class="card word">
+        <div class="card-head"><span>01</span><h2>English word</h2></div>
+        <div><strong class="hero-word" id="word">Loading…</strong><em id="part"></em></div>
+        <p class="definition" id="meaning"></p><p class="example" id="example"></p>
+        <a class="source" id="word-source" target="_blank" rel="noopener noreferrer">Check source ↗</a>
+      </article>
+
+      <article class="card kanji-card">
+        <div class="card-head"><span>02</span><h2>Kanji</h2></div>
+        <div class="kanji-layout"><strong class="kanji" id="kanji">日</strong><div><b id="kanji-meaning"></b><dl><dt>On</dt><dd id="on"></dd><dt>Kun</dt><dd id="kun"></dd></dl></div></div>
+        <p class="example" id="kanji-example"></p><a class="source" id="kanji-source" target="_blank" rel="noopener noreferrer">Check source ↗</a>
+      </article>
+
+      <article class="card history">
+        <div class="card-head"><span>03</span><h2>This day in history</h2></div>
+        <strong class="year" id="year">…</strong><p class="history-text" id="history"></p>
+        <a class="source" id="history-source" target="_blank" rel="noopener noreferrer">Source ↗</a>
+      </article>
+
+      <figure class="card image-card">
+        <img id="daily-image" src="/fallback-image.svg" alt="Daily educational image">
+        <figcaption><div class="card-head inverse"><span>04</span><h2>Look closely</h2></div><strong id="image-title">Daily image</strong><small id="image-credit"></small><a class="source inverse-link" id="image-source" target="_blank" rel="noopener noreferrer">Image &amp; licence ↗</a></figcaption>
+      </figure>
+
+      <article class="card maths">
+        <div class="card-head"><span>05</span><h2>Maths challenge</h2></div>
+        <p class="challenge" id="question"></p>
+        <details><summary>Reveal the answer</summary><div class="answer"><strong id="answer"></strong><span id="explanation"></span></div></details>
+      </article>
+
+      <article class="card fact">
+        <div class="card-head"><span>06</span><h2 id="fact-label">Verified fact</h2></div>
+        <blockquote id="fact"></blockquote><p class="credit" id="fact-credit"></p>
+        <a class="source" id="fact-source" target="_blank" rel="noopener noreferrer">Verification source ↗</a>
+      </article>
+    </section>
+    <footer><span>Six ideas. One day.</span><span id="status">Updates daily at midnight in Tokyo</span></footer>
+  </main>
+</body>
+</html>

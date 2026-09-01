@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="t d">
+  <title id="t">Patterns of learning</title><desc id="d">Abstract geometric forms inspired by a planet, an open book, and mathematical curves.</desc>
+  <rect width="1200" height="800" fill="#173139"/><circle cx="910" cy="235" r="190" fill="#e6aa3c"/><circle cx="910" cy="235" r="135" fill="#d6633d"/>
+  <path d="M80 610 Q300 390 520 610 Q740 390 960 610" fill="none" stroke="#f4f0e5" stroke-width="40"/>
+  <path d="M160 165 C340 60 500 110 590 285 C680 110 840 60 1020 165 L1020 540 C820 455 690 505 590 650 C490 505 360 455 160 540Z" fill="#2b756f" opacity=".85"/>
+  <path d="M590 285V650" stroke="#f4f0e5" stroke-width="12"/><g fill="#f4f0e5"><circle cx="285" cy="255" r="13"/><circle cx="352" cy="308" r="8"/><circle cx="760" cy="280" r="12"/><circle cx="820" cy="350" r="7"/></g>
+</svg>
