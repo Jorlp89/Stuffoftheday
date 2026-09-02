@@ -1,3 +1,8 @@
 .math-expression{display:inline-block;max-width:min(100%,240px);max-height:48px;vertical-align:middle}
 .math-source{color:var(--ink);font-size:clamp(8px,.58vw,11px);font-weight:750}
 .maths details{bottom:clamp(10px,.8vw,16px)}
+@media(min-width:751px) and (min-aspect-ratio:4/3){
+  .grid{grid-template-columns:.82fr 1.08fr 1.13fr}
+  .kanji-card .kanji-layout{align-items:flex-start}
+  .kanji-card .kanji{font-size:clamp(48px,4.4vw,82px);white-space:nowrap}
+}
