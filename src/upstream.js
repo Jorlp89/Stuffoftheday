@@ -44,12 +44,24 @@ export async function japaneseFor(date, timeoutMs, fetcher = fetch) {
 }
 
 function imageSources(fragment) {
-  return [...String(fragment).matchAll(/<img[^>]+src="([^"]+)"/g)].map(match => entities(match[1])).filter(url => /^https:\/\/vt-vtwa-assets\.varsitytutors\.com\//.test(url)).slice(0, 4);
+  const html = [...String(fragment).matchAll(/<img[^>]+src="([^"]+)"/g)].map(match => entities(match[1]));
+  const markdown = [...String(fragment).matchAll(/!\[[^\]]*\]\((https:\/\/vt-vtwa-assets\.varsitytutors\.com\/[^)]+)\)/g)].map(match => entities(match[1]));
+  return [...html, ...markdown].filter(url => /^https:\/\/vt-vtwa-assets\.varsitytutors\.com\//.test(url)).slice(0, 4);
 }
 
 export async function mathsFor(date, timeoutMs, fetcher = fetch) {
   const source = "https://www.varsitytutors.com/practice/subjects/math/question-of-the-day";
-  const html = await getText(source, timeoutMs, fetcher);
+  let html;
+  try { html = await getText(source, timeoutMs, fetcher); }
+  catch { html = await getText(`https://r.jina.ai/http://www.varsitytutors.com/practice/subjects/math/question-of-the-day`, timeoutMs, fetcher); }
+  if (html.startsWith("Title:")) {
+    const section = html.slice(html.indexOf("## Question of the Day"));
+    const questionLine = section.split("\n").find(line => line.includes("![") && !/^\d+\./.test(line.trim()));
+    const answerBlock = section.match(/\n\d+\.\s+([^\n]+)\s+\(correct answer\)/);
+    const explanation = html.match(/\*\*Explanation:\*\*([\s\S]*)$/);
+    if (!questionLine || !answerBlock) throw new Error("Mirrored daily maths data missing");
+    return { question: plain(questionLine.replace(/!\[[^\]]*\]\([^)]+\)/g, ""), 300) || "Solve today's illustrated maths problem.", questionImages: imageSources(questionLine), choices: [], answer: "", answerImages: imageSources(answerBlock[1]), explanation: plain(explanation?.[1] || "See the full worked explanation at the source.", 500), source, sourceName: "Varsity Tutors", date, stale: false };
+  }
   const questionMatch = html.match(/<p class="MuiTypography-root MuiTypography-body1 mui-1m5rh0e">([\s\S]*?)<\/p>/);
   const answerKey = html.match(/<li style="font-weight:800">([\s\S]*?)\s*\(correct answer\)<\/li>/);
   const explanationMatch = html.match(/<strong>Explanation:\s*<\/strong>([\s\S]*?)<\/p>/);
@@ -59,7 +71,7 @@ export async function mathsFor(date, timeoutMs, fetcher = fetch) {
   const correctImages = imageSources(answerKey[1]);
   let answer = plain(answerKey[1], 100).replace(/\(correct answer\)$/i, "").trim();
   if (!answer && correctImages[0]) answer = plain(labels.find(label => label.includes(correctImages[0]))?.match(/"([^"]+)"/)?.[1] || "See the source answer", 100);
-  return { question: plain(questionMatch[1], 300) || "Solve today's illustrated maths problem.", questionImages: imageSources(questionMatch[1]), choices, answer, explanation: plain(explanationMatch?.[1] || "See the full worked explanation at the source.", 500), source, sourceName: "Varsity Tutors", date, stale: false };
+  return { question: plain(questionMatch[1], 300) || "Solve today's illustrated maths problem.", questionImages: imageSources(questionMatch[1]), choices, answer, answerImages: correctImages, explanation: plain(explanationMatch?.[1] || "See the full worked explanation at the source.", 500), source, sourceName: "Varsity Tutors", date, stale: false };
 }
 
 export async function historyFor(date, timeoutMs, fetcher = fetch) {

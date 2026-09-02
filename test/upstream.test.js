@@ -37,3 +37,11 @@ test("maths adapter preserves formula images and attribution", async () => {
   assert.equal(item.answer, "42");
   assert.equal(item.sourceName, "Varsity Tutors");
 });
+
+test("maths adapter falls back to the public text mirror", async () => {
+  const markdown = 'Title: Math Question of the Day | Varsity Tutors\n\n## Question of the Day\n\nIntro text.\n\nWhat is ![Image 1](https://vt-vtwa-assets.varsitytutors.com/question.gif)?\n\n1. ![Image 2](https://vt-vtwa-assets.varsitytutors.com/answer.gif) (correct answer)\n\n**Explanation:**Subtract carefully.';
+  let calls = 0;
+  const item = await mathsFor("2026-09-02", 100, async () => { calls += 1; if (calls === 1) return { ok: false, status: 403, text: async () => "" }; return { ok: true, text: async () => markdown }; });
+  assert.equal(item.questionImages[0], "https://vt-vtwa-assets.varsitytutors.com/question.gif");
+  assert.equal(item.answerImages[0], "https://vt-vtwa-assets.varsitytutors.com/answer.gif");
+});
