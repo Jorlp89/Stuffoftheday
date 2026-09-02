@@ -21,6 +21,47 @@ async function getJson(url, timeoutMs, fetcher = fetch) {
   return JSON.parse(text);
 }
 
+async function getText(url, timeoutMs, fetcher = fetch) {
+  const response = await fetcher(url, { signal: AbortSignal.timeout(timeoutMs), headers: { "User-Agent": "ThingOfTheDay/1.0 (public classroom display)", Accept: "text/html" } });
+  if (!response.ok) throw new Error(`Upstream returned ${response.status}`);
+  const text = await response.text();
+  if (text.length > 2_500_000) throw new Error("Upstream response too large");
+  return text;
+}
+
+function entities(value) {
+  return String(value ?? "").replace(/&quot;/g, '"').replace(/&#x27;|&#39;|&apos;/g, "'").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+}
+
+export async function japaneseFor(date, timeoutMs, fetcher = fetch) {
+  const html = await getText("https://www.japanesepod101.com/japanese-phrases/", timeoutMs, fetcher);
+  const match = html.match(/data-wordday="([\s\S]*?)"\s+data-hintmode=/);
+  if (!match) throw new Error("Japanese daily word data missing");
+  const data = JSON.parse(entities(match[1]));
+  if (!data.text || !data.english || !data.romanization) throw new Error("Japanese daily word incomplete");
+  const sample = Array.isArray(data.samples) ? data.samples[0] : null;
+  return { glyph: plain(data.text, 40), meaning: plain(data.english, 100), on: plain(data.romanization, 100), kun: plain(data.kana, 100), example: sample ? `${plain(sample.text, 160)} — ${plain(sample.english, 180)}` : "", source: "https://www.japanesepod101.com/japanese-phrases/", sourceName: "JapanesePod101", date: plain(data.date || date, 20), stale: false };
+}
+
+function imageSources(fragment) {
+  return [...String(fragment).matchAll(/<img[^>]+src="([^"]+)"/g)].map(match => entities(match[1])).filter(url => /^https:\/\/vt-vtwa-assets\.varsitytutors\.com\//.test(url)).slice(0, 4);
+}
+
+export async function mathsFor(date, timeoutMs, fetcher = fetch) {
+  const source = "https://www.varsitytutors.com/practice/subjects/math/question-of-the-day";
+  const html = await getText(source, timeoutMs, fetcher);
+  const questionMatch = html.match(/<p class="MuiTypography-root MuiTypography-body1 mui-1m5rh0e">([\s\S]*?)<\/p>/);
+  const answerKey = html.match(/<li style="font-weight:800">([\s\S]*?)\s*\(correct answer\)<\/li>/);
+  const explanationMatch = html.match(/<strong>Explanation:\s*<\/strong>([\s\S]*?)<\/p>/);
+  if (!questionMatch || !answerKey) throw new Error("Daily maths data missing");
+  const labels = [...html.matchAll(/aria-label="([^"]+)"[^>]*data-testid="qotd-answer-choice"/g)].map(match => entities(match[1]));
+  const choices = labels.map(label => plain(label.match(/"([^"]+)"/)?.[1] || label.replace(/!\[\]\([^)]*\)/g, ""), 100)).filter(Boolean).slice(0, 6);
+  const correctImages = imageSources(answerKey[1]);
+  let answer = plain(answerKey[1], 100).replace(/\(correct answer\)$/i, "").trim();
+  if (!answer && correctImages[0]) answer = plain(labels.find(label => label.includes(correctImages[0]))?.match(/"([^"]+)"/)?.[1] || "See the source answer", 100);
+  return { question: plain(questionMatch[1], 300) || "Solve today's illustrated maths problem.", questionImages: imageSources(questionMatch[1]), choices, answer, explanation: plain(explanationMatch?.[1] || "See the full worked explanation at the source.", 500), source, sourceName: "Varsity Tutors", date, stale: false };
+}
+
 export async function historyFor(date, timeoutMs, fetcher = fetch) {
   const mmdd = date.slice(5);
   try {

@@ -3,7 +3,7 @@ import { readFile, mkdir, rename, writeFile } from "node:fs/promises";
 import { dirname, extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { localDaily, tokyoDate } from "./daily.js";
-import { fallbackImage, historyFor, imageFor } from "./upstream.js";
+import { fallbackImage, historyFor, imageFor, japaneseFor, mathsFor } from "./upstream.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(here, "..", "public");
@@ -13,7 +13,7 @@ const cacheDir = process.env.CACHE_DIR || "/tmp/thing-of-the-day-cache";
 const memory = new Map();
 const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".svg": "image/svg+xml", ".json": "application/json; charset=utf-8" };
 
-const csp = ["default-src 'self'", "script-src 'self'", "style-src 'self'", "img-src 'self' https://upload.wikimedia.org https://thumb.wikimedia.org data:", "connect-src 'self'", "font-src 'self'", "object-src 'none'", "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self' https://canva.com https://*.canva.com https://*.canva-apps.com https://morninghub-production.up.railway.app", "upgrade-insecure-requests"].join("; ");
+const csp = ["default-src 'self'", "script-src 'self'", "style-src 'self'", "img-src 'self' https://upload.wikimedia.org https://thumb.wikimedia.org https://vt-vtwa-assets.varsitytutors.com data:", "connect-src 'self'", "font-src 'self'", "object-src 'none'", "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self' https://canva.com https://*.canva.com https://*.canva-apps.com https://morninghub-production.up.railway.app", "upgrade-insecure-requests"].join("; ");
 
 function headers(extra = {}) {
   return { "Content-Security-Policy": csp, "Referrer-Policy": "strict-origin-when-cross-origin", "X-Content-Type-Options": "nosniff", "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()", "Cross-Origin-Resource-Policy": "cross-origin", ...extra };
@@ -38,11 +38,13 @@ async function todayPayload() {
   const date = tokyoDate(), cached = await readCache(date);
   if (cached) return cached;
   const base = localDaily(date);
-  const [historyResult, imageResult] = await Promise.allSettled([historyFor(date, timeoutMs), imageFor(date, timeoutMs)]);
+  const [historyResult, imageResult, japaneseResult, mathsResult] = await Promise.allSettled([historyFor(date, timeoutMs), imageFor(date, timeoutMs), japaneseFor(date, timeoutMs), mathsFor(date, timeoutMs)]);
   const value = {
     ...base,
     history: historyResult.status === "fulfilled" ? historyResult.value : await historyFor(date, 1, async () => { throw new Error("offline"); }),
     image: imageResult.status === "fulfilled" ? imageResult.value : fallbackImage(),
+    kanji: japaneseResult.status === "fulfilled" ? japaneseResult.value : base.kanji,
+    maths: mathsResult.status === "fulfilled" ? mathsResult.value : base.maths,
     generatedAt: new Date().toISOString(), timeZone: "Asia/Tokyo"
   };
   await saveCache(date, value);
