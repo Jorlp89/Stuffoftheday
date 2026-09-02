@@ -8,7 +8,7 @@ import { fallbackImage, historyFor, imageFor, japaneseFor, mathsFor } from "./up
 const here = dirname(fileURLToPath(import.meta.url));
 const publicDir = join(here, "..", "public");
 const port = Number.parseInt(process.env.PORT || "3000", 10);
-const timeoutMs = Math.min(Math.max(Number.parseInt(process.env.FETCH_TIMEOUT_MS || "3500", 10), 500), 10000);
+const timeoutMs = Math.min(Math.max(Number.parseInt(process.env.FETCH_TIMEOUT_MS || "8000", 10), 500), 10000);
 const cacheDir = process.env.CACHE_DIR || "/tmp/thing-of-the-day-cache";
 const memory = new Map();
 const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".svg": "image/svg+xml", ".json": "application/json; charset=utf-8" };
