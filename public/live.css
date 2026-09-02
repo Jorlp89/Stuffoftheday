@@ -6,7 +6,23 @@
 .math-source{color:var(--ink);font-size:clamp(8px,.58vw,11px);font-weight:750}
 .maths details{bottom:clamp(10px,.8vw,16px)}
 @media(min-width:751px) and (min-aspect-ratio:4/3){
-  .grid{grid-template-columns:.82fr 1.08fr 1.13fr}
+  .board{padding:clamp(14px,1.5vw,28px);gap:clamp(9px,.9vw,16px)}
+  h1{font-size:clamp(28px,2.6vw,50px)}
+  .masthead{padding-bottom:clamp(7px,.7vw,11px)}
+  .grid{grid-template-columns:repeat(12,1fr);grid-template-rows:.88fr 1.12fr;gap:clamp(10px,.9vw,16px)}
+  .word{grid-column:1/4;grid-row:1}
+  .kanji-card{grid-column:4/8;grid-row:1}
+  .history{grid-column:8/13;grid-row:1}
+  .image-card{grid-column:1/5;grid-row:2}
+  .maths{grid-column:5/9;grid-row:2}
+  .fact{grid-column:9/13;grid-row:2}
   .kanji-card .kanji-layout{align-items:flex-start}
   .kanji-card .kanji{font-size:clamp(48px,4.4vw,82px);white-space:nowrap}
+  .word .hero-word{font-size:clamp(25px,2.1vw,40px)}
+  .history .year{font-size:clamp(32px,3vw,54px)}
+  .history-text{font-size:clamp(12px,.92vw,17px)}
+  .maths .challenge{font-size:clamp(24px,2vw,38px);margin-top:clamp(14px,1.4vw,26px)}
+  .challenge .math-expression{height:clamp(54px,4.5vw,86px);width:auto;max-width:92%;max-height:none;margin-top:clamp(14px,1.4vw,26px)}
+  .answer strong .math-expression{height:clamp(30px,2.4vw,46px);width:auto;max-height:none}
 }
+@media(max-width:750px),(max-aspect-ratio:4/3){.grid>.card{grid-column:auto;grid-row:auto}}
