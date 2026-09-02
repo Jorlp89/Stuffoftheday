@@ -44,4 +44,6 @@ test("maths adapter falls back to the public text mirror", async () => {
   const item = await mathsFor("2026-09-02", 100, async () => { calls += 1; if (calls === 1) return { ok: false, status: 403, text: async () => "" }; return { ok: true, text: async () => markdown }; });
   assert.equal(item.questionImages[0], "https://vt-vtwa-assets.varsitytutors.com/question.gif");
   assert.equal(item.answerImages[0], "https://vt-vtwa-assets.varsitytutors.com/answer.gif");
+  assert.equal(item.question, "Simplify:");
+  assert.doesNotMatch(item.explanation, /!\[|https?:/);
 });

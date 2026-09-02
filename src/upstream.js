@@ -60,7 +60,12 @@ export async function mathsFor(date, timeoutMs, fetcher = fetch) {
     const answerBlock = section.match(/\n\d+\.\s+([^\n]+)\s+\(correct answer\)/);
     const explanation = html.match(/\*\*Explanation:\*\*([\s\S]*)$/);
     if (!questionLine || !answerBlock) throw new Error("Mirrored daily maths data missing");
-    return { question: plain(questionLine.replace(/!\[[^\]]*\]\([^)]+\)/g, ""), 300) || "Solve today's illustrated maths problem.", questionImages: imageSources(questionLine), choices: [], answer: "", answerImages: imageSources(answerBlock[1]), explanation: plain(explanation?.[1] || "See the full worked explanation at the source.", 500), source, sourceName: "Varsity Tutors", date, stale: false };
+    const questionImages = imageSources(questionLine);
+    let question = plain(questionLine.replace(/!\[[^\]]*\]\([^)]+\)/g, ""), 300);
+    if (questionImages.length && /^What is\s*\?$/i.test(question)) question = "Simplify:";
+    const explanationText = plain((explanation?.[1] || "").replace(/!\[[^\]]*\]\([^)]+\)/g, " ").replace(/\.(?=[A-Z])/g, ". "), 500);
+    const conciseExplanation = explanationText.match(/^.*?[.!?](?:\s|$)/)?.[0]?.trim() || "See the full worked explanation at the source.";
+    return { question: question || "Solve today's illustrated maths problem.", questionImages, choices: [], answer: "", answerImages: imageSources(answerBlock[1]), explanation: conciseExplanation, source, sourceName: "Varsity Tutors", date, stale: false };
   }
   const questionMatch = html.match(/<p class="MuiTypography-root MuiTypography-body1 mui-1m5rh0e">([\s\S]*?)<\/p>/);
   const answerKey = html.match(/<li style="font-weight:800">([\s\S]*?)\s*\(correct answer\)<\/li>/);

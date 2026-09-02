@@ -1,4 +1,8 @@
-.math-expression{display:inline-block;max-width:min(100%,240px);max-height:48px;vertical-align:middle}
+.math-expression{display:inline-block;max-width:min(100%,280px);max-height:64px;vertical-align:middle;object-fit:contain}
+.challenge .math-expression{display:block;max-width:85%;max-height:82px;margin:12px 0 0}
+.answer strong{display:flex;align-items:center;min-width:80px}
+.answer strong .math-expression{max-width:220px;max-height:54px;margin-right:8px}
+.answer{align-items:flex-start;line-height:1.3}
 .math-source{color:var(--ink);font-size:clamp(8px,.58vw,11px);font-weight:750}
 .maths details{bottom:clamp(10px,.8vw,16px)}
 @media(min-width:751px) and (min-aspect-ratio:4/3){
