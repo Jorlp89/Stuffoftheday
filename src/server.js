@@ -62,7 +62,12 @@ async function handler(req, res) {
   const safe = normalize(route).replace(/^(\.\.(\/|\\|$))+/, "");
   const file = join(publicDir, safe);
   if (!file.startsWith(publicDir)) { res.writeHead(404, headers()); return res.end(); }
-  try { const body = await readFile(file); res.writeHead(200, headers({ "Content-Type": mime[extname(file)] || "application/octet-stream", "Cache-Control": "public, max-age=3600", "Content-Length": body.length })); res.end(req.method === "HEAD" ? undefined : body); }
+  try {
+    const body = await readFile(file);
+    const cacheControl = extname(file) === ".html" ? "no-cache" : "public, max-age=3600";
+    res.writeHead(200, headers({ "Content-Type": mime[extname(file)] || "application/octet-stream", "Cache-Control": cacheControl, "Content-Length": body.length }));
+    res.end(req.method === "HEAD" ? undefined : body);
+  }
   catch { res.writeHead(404, headers({ "Content-Type": "text/plain; charset=utf-8" })); res.end("Not found"); }
 }
 
